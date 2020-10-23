@@ -5,11 +5,11 @@
 
 #FOR DEBUG, set everything=1 for release
 # set -a # Comment this line if not already done. It's used to launch a bash later for debug purposes.
-INSTALL_DEPS=0
-COMPILE_LSUSB=0
-COMPILE_HIDAPI=0
-DOWNLOAD_ICESPROG=0
-COMPILE_ICESPROG=0
+INSTALL_DEPS=1
+COMPILE_LSUSB=1
+COMPILE_HIDAPI=1
+DOWNLOAD_ICESPROG=1
+COMPILE_ICESPROG=1
 CREATE_PACKAGE=1
 
 # Library versions and names
