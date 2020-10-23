@@ -35,7 +35,7 @@ fi
 if [ ${ARCH:0:7} == "windows" ]; then
   sudo apt-get install -y build-essential cmake pkg-config \
                           mingw-w64 mingw-w64-tools \
-                          autoconf libtool \ 
+                          autoconf libtool \
                           libudev-dev
   sudo apt-get autoremove -y
 fi
