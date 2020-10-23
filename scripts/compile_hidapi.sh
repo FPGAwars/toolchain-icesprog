@@ -20,7 +20,7 @@ rsync -a "$LIBHIDAPI2" "$BUILD_DIR" --exclude .git
 cd "$BUILD_DIR/$LIBHIDAPI2"
 
 PREFIX="$BUILD_DIR/$LIBHIDAPI2/release"
-PKG_CONFIG_PATH="$BUILD_DIR/$LIBUSB/release/lib/pkgconfig"
+export PKG_CONFIG_PATH="$BUILD_DIR/$LIBUSB/release/lib/pkgconfig"
 
 #-- Build hidapi
 if [ $ARCH != "darwin" ]; then
