@@ -1,0 +1,7 @@
+{
+  "name":"toolchain-icesprog",
+  "description":"apio package for iCESugar board programmer",
+  "url":"https://github.com/FPGAwars/toolchain-icesprog/releases",
+  "version": %VERSION%,
+  "system": [ %SYSTEM% ]
+}
