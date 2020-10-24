@@ -147,6 +147,9 @@ test -d "$PACKAGES_DIR" || mkdir -p "$PACKAGES_DIR"
 # -- Create the package folders
 test -d "$PACKAGE_DIR"/"$NAME" || mkdir -p "$PACKAGE_DIR"/"$NAME"
 
+# -- Create the upstream directory
+mkdir -p "$UPSTREAM_DIR"
+
 # --------- Compile lsusb ------------------------------------------
 if [ "$COMPILE_LSUSB" == "1" ]; then
 
