@@ -31,11 +31,17 @@ if [ "$ARCH" == "darwin" ]; then
   # TODO
   $CC -o icesprog icesprog.c -lusb-1.0
 elif [ "${ARCH:0:7}" == "windows" ]; then
-  $CC -o "icesprog$EXE" icesprog.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread -lsetupapi
+
+  # windows libc converts line ending by default. This is a workarround.
+  echo -e "#if (defined _WIN32 || defined WIN32) && ! defined CYGWIN
+  #include <fcntl.h>
+  int _fmode = _O_BINARY;
+  #endif" > binmode.c
+
+  $CC -o "icesprog$EXE" icesprog.c binmode.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread -lsetupapi
+
 else
-set -x
   $CC -o "icesprog$EXE" icesprog.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi-libusb -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread
-set +x
 fi
 cd ..
 
