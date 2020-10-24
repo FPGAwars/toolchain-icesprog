@@ -148,7 +148,8 @@ test -d "$PACKAGES_DIR" || mkdir -p "$PACKAGES_DIR"
 test -d "$PACKAGE_DIR"/"$NAME" || mkdir -p "$PACKAGE_DIR"/"$NAME"
 
 # -- Create the upstream directory
-mkdir -p "$UPSTREAM_DIR"
+test -d "$UPSTREAM_DIR" || mkdir "$UPSTREAM_DIR"
+
 
 # --------- Compile lsusb ------------------------------------------
 if [ "$COMPILE_LSUSB" == "1" ]; then
@@ -164,15 +165,6 @@ if [ "$COMPILE_HIDAPI" == "1" ]; then
   . $WORK_DIR/scripts/compile_hidapi.sh
 fi
 
-# --------- Compile hidapi ------------------------------------------
-if [ "$COMPILE_HIDAPI" == "1" ]; then
-
-  print ">> Compile hidapi"
-  . $WORK_DIR/scripts/compile_hidapi.sh
-fi
-
-# -- Create the upstream directory
-test -d "$UPSTREAM_DIR" || mkdir "$UPSTREAM_DIR"
 
 # --------- Compile icesprog ------------------------------------
 if [ "$COMPILE_ICESPROG" == "1" ]; then
@@ -189,5 +181,3 @@ if [ $CREATE_PACKAGE == "1" ]; then
 
 fi
 
-
-echo ""
