@@ -19,7 +19,7 @@ TARGET_ARCHS="linux_x86_64 linux_i686 linux_armv7l linux_aarch64 windows_x86 win
 NAME=toolchain-icesprog
 
 # -- Debug flags
-INSTALL_DEPS=0
+INSTALL_DEPS=1
 COMPILE_LSUSB=1
 COMPILE_HIDAPI=1
 COMPILE_ICESPROG=1
@@ -116,14 +116,16 @@ fi
 if [ "$COMPILE_HIDAPI" == "1" ]; then
 
   print ">> Compile hidapi"
-  . $WORK_DIR/scripts/compile_hidapi.sh
+    # shellcheck source=scripts/compile_hidapi.sh
+  . "$WORK_DIR"/scripts/compile_hidapi.sh
 fi
 
 # --------- Compile icesprog ------------------------------------
 if [ "$COMPILE_ICESPROG" == "1" ]; then
 
   print ">> Compile icesprog"
-  . $WORK_DIR/scripts/compile_icesprog.sh
+    # shellcheck source=scripts/compile_icesprog.sh
+  . "$WORK_DIR"/scripts/compile_icesprog.sh
 fi
 
 # --------- Create the package -------------------------------------
