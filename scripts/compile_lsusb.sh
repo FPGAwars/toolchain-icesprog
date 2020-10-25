@@ -7,7 +7,7 @@ TAR_LIBUSB=$LIBUSB.tar.bz2
 REL_LIBUSB=https://github.com/libusb/libusb/releases/download/v$VER/$TAR_LIBUSB
 
 # -- Setup
-# shellcheck source=build_setup.sh
+# shellcheck source=scripts/build_setup.sh
 . "$WORK_DIR"/scripts/build_setup.sh
 
 cd "$UPSTREAM_DIR" || exit
