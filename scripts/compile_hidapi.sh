@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # -- Compile hidapi script
 LIBHIDAPI_VER=0.9.0
 LIBHIDAPI="hidapi-$LIBHIDAPI_VER"
@@ -6,9 +8,10 @@ TAR_LIBHIDAPI="$LIBHIDAPI.tar.gz"
 REL_LIBHIDAPI="https://github.com/libusb/hidapi/archive/$TAR_LIBHIDAPI"
 
 # -- Setup
-. "$WORK_DIR/scripts/build_setup.sh"
+# shellcheck source=scripts/build_setup.sh
+. "$WORK_DIR"/scripts/build_setup.sh
 
-cd "$UPSTREAM_DIR"
+cd "$UPSTREAM_DIR" || exit
 
 # -- Check and download the release
 test -e "$TAR_LIBHIDAPI" || wget "$REL_LIBHIDAPI"
@@ -19,15 +22,15 @@ tar zxf "$TAR_LIBHIDAPI"
 # -- Copy the upstream sources into the build directory
 rsync -a "$LIBHIDAPI_FOLDER" "$BUILD_DIR" --exclude .git
 
-cd "$BUILD_DIR/$LIBHIDAPI_FOLDER"
+cd "$BUILD_DIR/$LIBHIDAPI_FOLDER" || exit
 
 PREFIX="$BUILD_DIR/$LIBHIDAPI_FOLDER/release"
 #export PKG_CONFIG_PATH="$BUILD_DIR/$LIBUSB/release/lib/pkgconfig"
 
 #-- Build hidapi
-if [ $ARCH != "darwin" ]; then
+if [ "$ARCH" != "darwin" ]; then
   ./bootstrap
-  ./configure --prefix=$PREFIX --host=$HOST $CONFIG_FLAGS
+  ./configure --prefix="$PREFIX" --host=$HOST "$CONFIG_FLAGS"
    make -j$J
    make install
 fi
@@ -36,7 +39,7 @@ echo ""
 echo "----------> COMPILAR EJEMPLO!!!!"
 
 #-- Build hidtest statically linked
-cd hidtest
+cd hidtest || exit
 test -f "hidtest$EXE" && rm "hidtest$EXE"
 if [ "$ARCH" == "darwin" ]; then
   # TODO
