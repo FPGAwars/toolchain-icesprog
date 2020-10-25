@@ -35,9 +35,18 @@ if [ "$ARCH" == "darwin" ]; then
   # TODO
   $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
 else
-echo "PREFIX_LIBUSB: $PREFIX_LIBUSB"
   $CC -o "icesprog$EXE" icesprog.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -lhidapi-libusb -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0
+ 
 fi
+#elif [ "${ARCH:0:7}" == "windows" ]; then
+
+  # windows libc converts line ending by default. This is a workarround.
+#  echo -e "#if (defined _WIN32 || defined WIN32) && ! defined CYGWIN
+  #include <fcntl.h>
+#  int _fmode = _O_BINARY;
+  #endif" > binmode.c
+
+#  $CC -o "icesprog$EXE" icesprog.c binmode.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread -lsetupapi
 
 cd ..
 
