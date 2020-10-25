@@ -35,7 +35,7 @@ if [ "$ARCH" == "darwin" ]; then
   # TODO
   $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
 else
-  $CC -o "icesprog$EXE" icesprog.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -lhidapi-libusb -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0
+  $CC -o "icesprog$EXE" icesprog.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -l$LIBHIDAPI_NAME -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0 $EXTRA_LIB
  
 fi
 #elif [ "${ARCH:0:7}" == "windows" ]; then

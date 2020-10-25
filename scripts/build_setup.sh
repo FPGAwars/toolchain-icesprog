@@ -4,6 +4,7 @@
 if [ "$ARCH" == "linux_x86_64" ]; then
   export CC="gcc"
   export HOST="x86_64-linux-gnu"
+  export LIBHIDAPI_NAME="hidapi-libusb"
 fi
 
 if [ "$ARCH" == "linux_i686" ]; then
@@ -37,6 +38,8 @@ if [ "$ARCH" == "windows_amd64" ]; then
   export CC="x86_64-w64-mingw32-gcc"
   export HOST="x86_64-w64-mingw32"
   export CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=$WORK_DIR/build-data/cmake/toolchain-win64.cmake"
+  export LIBHIDAPI_NAME="hidapi"
+  export EXTRA_LIB="-lsetupapi"
 fi
 
 if [ "$ARCH" == "darwin" ]; then
