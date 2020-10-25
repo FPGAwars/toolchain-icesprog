@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # -- Compile hidapi script
 
 SRC_ICESPROG="https://github.com/wuxx/icesugar"
@@ -7,7 +9,8 @@ ICESUGAR="icesugar"
 SRC_TAG="6424e0d8f8a48fe0bd77059bbc0fa9bf72767708"
 
 # -- Setup
-. "$WORK_DIR/scripts/build_setup.sh"
+# shellcheck source=scripts/build_setup.sh
+. "$WORK_DIR"/scripts/build_setup.sh
 
 cd "$UPSTREAM_DIR" || exit
 
