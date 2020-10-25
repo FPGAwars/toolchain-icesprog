@@ -1,42 +1,44 @@
 # -- Compile hidapi script
 
+SRC_ICESPROG="https://github.com/wuxx/icesugar"
+ICESUGAR="icesugar"
+
+# -- Trusted tag or commit
+SRC_TAG="6424e0d8f8a48fe0bd77059bbc0fa9bf72767708"
+
 # -- Setup
 . "$WORK_DIR/scripts/build_setup.sh"
 
-# --------- Download icesugar ------------------------------------
-if [ "$DOWNLOAD_ICESPROG" == "1" ]; then
-  echo "Download from: ""$SRC_URL"
+cd "$UPSTREAM_DIR" || exit
 
-  # TODO ask maybe?
-  rm -rf "$ICESPROG_UPSTREAM_DIR"
+#-- Clone the icesugar repo
+test -e icesugar || git clone $SRC_ICESPROG
 
-  git clone -- "$SRC_URL" "$ICESPROG_UPSTREAM_DIR"
+#-- Enter into the icesugar folder
+cd $ICESUGAR || exit
 
-  cd "$ICESPROG_UPSTREAM_DIR"
+#-- Checkout the trusted tag
+git checkout "$SRC_TAG"
 
-  git checkout "$SRC_TAG"
+cd ..
 
-  cd "$WORK_DIR"
+ #-- Copy the upstream sources into the build directory
+ rsync -a $ICESUGAR/tools/src/* "$BUILD_DIR/icesprog" --exclude .git
 
-fi
+#-- Enter into the sources folder
+cd "$BUILD_DIR/icesprog" || exit
 
-# -- Copy the upstream sources into the build directory
-rsync -vaz "$ICESPROG_UPSTREAM_DIR/tools/src/" "$BUILD_DIR/icesprog" --exclude .git
+PREFIX_LIBHIDAPI="$BUILD_DIR/$LIBHIDAPI_FOLDER/release"
+PREFIX_LIBUSB="$BUILD_DIR/$LIBUSB"/release
 
-cd "$BUILD_DIR/icesprog"
-
-#-- Build icesprog statically linked
-test -f "hidtest$EXE" && rm "hidtest$EXE"
 if [ "$ARCH" == "darwin" ]; then
   # TODO
-  $CC -o icesprog icesprog.c -lusb-1.0
-elif [ "${ARCH:0:7}" == "windows" ]; then
-  $CC -o "icesprog$EXE" icesprog.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread -lsetupapi
+  $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
 else
-set -x
-  $CC -o "icesprog$EXE" icesprog.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi-libusb -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread
-set +x
+echo "PREFIX_LIBUSB: $PREFIX_LIBUSB"
+  $CC -o "icesprog$EXE" icesprog.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -lhidapi-libusb -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0
 fi
+
 cd ..
 
 # # -- Test the generated executables
