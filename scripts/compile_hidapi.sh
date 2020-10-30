@@ -3,7 +3,10 @@
 # -- Compile hidapi script
 LIBHIDAPI_VER=0.9.0
 LIBHIDAPI="hidapi-$LIBHIDAPI_VER"
-export LIBHIDAPI_FOLDER="hidapi-$LIBHIDAPI"
+LIBUSB_VER=1.0.22
+LIBUSB=libusb-$LIBUSB_VER
+
+LIBHIDAPI_FOLDER="hidapi-$LIBHIDAPI"
 TAR_LIBHIDAPI="$LIBHIDAPI.tar.gz"
 REL_LIBHIDAPI="https://github.com/libusb/hidapi/archive/$TAR_LIBHIDAPI"
 
@@ -38,15 +41,19 @@ fi
 echo ""
 echo "----------> COMPILAR EJEMPLO!!!!"
 
+
+if [ "$ARCH" == "windows_x86" ]; then
+  EXTRA_LIB=" -lhid -lsetupapi"
+fi
+
 #-- Build hidtest statically linked
 cd hidtest || exit
 test -f "hidtest$EXE" && rm "hidtest$EXE"
 if [ "$ARCH" == "darwin" ]; then
   # TODO
-  $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
+  $CC -o hidtest hidtest.cpp -lusb-1.0 -lhidapi -I../hidtest
 else
-  echo " $CC -o hidtest$EXE hidtest.cpp -static -L$PREFIX/lib -I$PREFIX/include/hidapi -lhidapi-libusb -L$BUILD_DIR/$LIBUSB/release/lib -lusb-1.0 -lpthread $EXTRA_LIB" 
-  $CC -o "hidtest$EXE" hidtest.cpp -static -L"$PREFIX"/lib -I"$PREFIX"/include/hidapi -l$LIBHIDAPI_NAME -L"$BUILD_DIR/$LIBUSB"/release/lib -lusb-1.0 -lpthread $EXTRA_LIB
+  $CC -o "hidtest$EXE" hidtest.cpp -static -L"$PREFIX"/lib -I"$PREFIX"/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -lusb-1.0 -lpthread $EXTRA_LIB
 fi
 cd ..
 
