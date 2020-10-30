@@ -26,7 +26,7 @@ fi
 
 if [ "${ARCH:0:7}" == "windows" ]; then
   sudo apt-get install -y build-essential cmake pkg-config \
-                          mingw-w64 mingw-w64-tools
+                          mingw-w64 mingw-w64-tools autoconf libtool
   sudo apt-get autoremove -y
 fi
 
