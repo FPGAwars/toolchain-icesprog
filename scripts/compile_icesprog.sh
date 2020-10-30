@@ -37,7 +37,7 @@ cd "$BUILD_DIR/icesprog" || exit
 PREFIX_LIBHIDAPI="$BUILD_DIR/$LIBHIDAPI_FOLDER/release"
 PREFIX_LIBUSB="$BUILD_DIR/$LIBUSB"/release
 
-wget "$WINDOWSBINMODE_URL" -O binmode.cwget
+wget "$WINDOWSBINMODE_URL" -O binmode.c
 
 if [ "$ARCH" == "darwin" ]; then
   # TODO
