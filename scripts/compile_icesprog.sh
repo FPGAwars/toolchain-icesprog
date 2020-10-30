@@ -8,6 +8,9 @@ ICESUGAR="icesugar"
 # -- Trusted tag or commit
 SRC_TAG="6424e0d8f8a48fe0bd77059bbc0fa9bf72767708"
 
+# -- Binmode source so windows build open files as binary without source change
+WINDOWSBINMODE_URL="https://raw.githubusercontent.com/aalku/mingw-w64-binmode/74de4252e605a2fb82a526a8befc79f4152a7819/binmode.c"
+
 # -- Setup
 # shellcheck source=scripts/build_setup.sh
 . "$WORK_DIR"/scripts/build_setup.sh
@@ -34,22 +37,15 @@ cd "$BUILD_DIR/icesprog" || exit
 PREFIX_LIBHIDAPI="$BUILD_DIR/$LIBHIDAPI_FOLDER/release"
 PREFIX_LIBUSB="$BUILD_DIR/$LIBUSB"/release
 
+wget "$WINDOWSBINMODE_URL" -O binmode.cwget
+
 if [ "$ARCH" == "darwin" ]; then
   # TODO
   $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
 else
-  $CC -o "icesprog$EXE" icesprog.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -l$LIBHIDAPI_NAME -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0 $EXTRA_LIB
+  $CC -o "icesprog$EXE" icesprog.c binmode.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -l$LIBHIDAPI_NAME -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0 $EXTRA_LIB
  
 fi
-#elif [ "${ARCH:0:7}" == "windows" ]; then
-
-  # windows libc converts line ending by default. This is a workarround.
-#  echo -e "#if (defined _WIN32 || defined WIN32) && ! defined CYGWIN
-  #include <fcntl.h>
-#  int _fmode = _O_BINARY;
-  #endif" > binmode.c
-
-#  $CC -o "icesprog$EXE" icesprog.c binmode.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread -lsetupapi
 
 cd ..
 
