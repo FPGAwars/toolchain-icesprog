@@ -7,7 +7,7 @@ if [ "$ARCH" == "linux_x86_64" ]; then
 fi
 
 if [ "$ARCH" == "linux_i686" ]; then
-  sudo apt-get install -y build-essential cmake pkg-config \
+  sudo apt-get install -y build-essential cmake pkg-config libudev-dev:i386 libusb-1.0-0-dev:i386 libfox-1.6-dev autotools-dev autoconf automake libtool \
                           gcc-multilib g++-multilib
   sudo apt-get autoremove -y
 fi

@@ -53,7 +53,7 @@ if [ "$ARCH" == "darwin" ]; then
   # TODO
   $CC -o hidtest hidtest.cpp -lusb-1.0 -lhidapi -I../hidtest
 else
-  $CC -o "hidtest$EXE" hidtest.cpp -static -L"$PREFIX"/lib -I"$PREFIX"/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -lusb-1.0 -lpthread $EXTRA_LIB
+  $CC -o "hidtest$EXE" hidtest.cpp -static -L"$PREFIX"/lib -I"$PREFIX"/include/hidapi -l$LIBHIDAPI_NAME -L"$BUILD_DIR/$LIBUSB"/release/lib -lusb-1.0 -lpthread $EXTRA_LIB
 fi
 cd ..
 
