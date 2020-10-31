@@ -1,63 +1,57 @@
-# -- Compile hidapi script
+#!/bin/bash
 
+# -- Compile hidapi script
+LIBHIDAPI_VER=0.9.0
+LIBHIDAPI="hidapi-$LIBHIDAPI_VER"
+
+# -- This vars are inherited from compile_lsusb.sh but you will need them here if you disable it's COMPILE_LSUSB flag
+# LIBUSB_VER=1.0.22
+# LIBUSB=libusb-$LIBUSB_VER
+
+LIBHIDAPI_FOLDER="hidapi-$LIBHIDAPI"
 TAR_LIBHIDAPI="$LIBHIDAPI.tar.gz"
 REL_LIBHIDAPI="https://github.com/libusb/hidapi/archive/$TAR_LIBHIDAPI"
 
 # -- Setup
-. "$WORK_DIR/scripts/build_setup.sh"
+# shellcheck source=scripts/build_setup.sh
+. "$WORK_DIR"/scripts/build_setup.sh
 
-cd "$UPSTREAM_DIR"
+cd "$UPSTREAM_DIR" || exit
 
 # -- Check and download the release
-test -e "$TAR_LIBHIDAPI "|| wget "$REL_LIBHIDAPI"
+test -e "$TAR_LIBHIDAPI" || wget "$REL_LIBHIDAPI"
 
 # -- Unpack the release
 tar zxf "$TAR_LIBHIDAPI"
 
 # -- Copy the upstream sources into the build directory
-rsync -a "$LIBHIDAPI2" "$BUILD_DIR" --exclude .git
+rsync -a "$LIBHIDAPI_FOLDER" "$BUILD_DIR" --exclude .git
 
-cd "$BUILD_DIR/$LIBHIDAPI2"
+cd "$BUILD_DIR/$LIBHIDAPI_FOLDER" || exit
 
-PREFIX="$BUILD_DIR/$LIBHIDAPI2/release"
-export PKG_CONFIG_PATH="$BUILD_DIR/$LIBUSB/release/lib/pkgconfig"
+PREFIX="$BUILD_DIR/$LIBHIDAPI_FOLDER/release"
+#export PKG_CONFIG_PATH="$BUILD_DIR/$LIBUSB/release/lib/pkgconfig"
 
 #-- Build hidapi
-if [ $ARCH != "darwin" ]; then
+if [ "$ARCH" != "darwin" ]; then
   ./bootstrap
-  ./configure --prefix=$PREFIX --host=$HOST --enable-udev=no $CONFIG_FLAGS
-#  make -j$J
-#  make install
+  ./configure --prefix="$PREFIX" --host=$HOST "$CONFIG_FLAGS"
+   make -j$J
+   make install
 fi
 
-if [ "${ARCH:0:5}" == "linux" ]; then
-  # cd libusb
-  make -j"$J"
-  make install
-  #cd ..
-elif [ "${ARCH:0:7}" == "windows" ]; then
-  #cd windows
-  make -j"$J"
-  make install
-  #cd ..
-else
-  # TODO
-  print "Architecture not currently supported by build script $0"
-  exit -1
-fi
+echo ""
+echo "----------> COMPILAR EJEMPLO!!!!"
 
-# hidtest/.libs/hidtest-libusb is dynamically linked so we compile it again
 
 #-- Build hidtest statically linked
-cd hidtest
+cd hidtest || exit
 test -f "hidtest$EXE" && rm "hidtest$EXE"
 if [ "$ARCH" == "darwin" ]; then
   # TODO
-  $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
-elif [ "${ARCH:0:7}" == "windows" ]; then
-  $CC -o "hidtest$EXE" hidtest.cpp -static -L"$PREFIX"/lib -I"$PREFIX"/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -lusb-1.0 -lpthread -lsetupapi
+  $CC -o hidtest hidtest.cpp -lusb-1.0 -lhidapi -I../hidtest
 else
-  $CC -o "hidtest$EXE" hidtest.cpp -static -L"$PREFIX"/lib -I"$PREFIX"/include/hidapi -lhidapi-libusb -L"$BUILD_DIR/$LIBUSB"/release/lib -lusb-1.0 -lpthread
+  $CC -o "hidtest$EXE" hidtest.cpp -static -L"$PREFIX"/lib -I"$PREFIX"/include/hidapi -l$LIBHIDAPI_NAME -L"$BUILD_DIR/$LIBUSB"/release/lib -lusb-1.0 -lpthread $EXTRA_LIB
 fi
 cd ..
 

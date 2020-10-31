@@ -1,48 +1,52 @@
+#!/bin/bash
+
 # -- Compile hidapi script
 
+SRC_ICESPROG="https://github.com/wuxx/icesugar"
+ICESUGAR="icesugar"
+
+# -- Trusted tag or commit
+SRC_TAG="6424e0d8f8a48fe0bd77059bbc0fa9bf72767708"
+
+# -- Binmode source so windows build open files as binary without source change
+WINDOWSBINMODE_URL="https://raw.githubusercontent.com/aalku/mingw-w64-binmode/74de4252e605a2fb82a526a8befc79f4152a7819/binmode.c"
+
 # -- Setup
-. "$WORK_DIR/scripts/build_setup.sh"
+# shellcheck source=scripts/build_setup.sh
+. "$WORK_DIR"/scripts/build_setup.sh
 
-# --------- Download icesugar ------------------------------------
-if [ "$DOWNLOAD_ICESPROG" == "1" ]; then
-  echo "Download from: ""$SRC_URL"
+cd "$UPSTREAM_DIR" || exit
 
-  # TODO ask maybe?
-  rm -rf "$ICESPROG_UPSTREAM_DIR"
+#-- Clone the icesugar repo
+test -e icesugar || git clone $SRC_ICESPROG
 
-  git clone -- "$SRC_URL" "$ICESPROG_UPSTREAM_DIR"
+#-- Enter into the icesugar folder
+cd $ICESUGAR || exit
 
-  cd "$ICESPROG_UPSTREAM_DIR"
+#-- Checkout the trusted tag
+git checkout "$SRC_TAG"
 
-  git checkout "$SRC_TAG"
+cd ..
 
-  cd "$WORK_DIR"
+ #-- Copy the upstream sources into the build directory
+ rsync -a $ICESUGAR/tools/src/* "$BUILD_DIR/icesprog" --exclude .git
 
-fi
+#-- Enter into the sources folder
+cd "$BUILD_DIR/icesprog" || exit
 
-# -- Copy the upstream sources into the build directory
-rsync -vaz "$ICESPROG_UPSTREAM_DIR/tools/src/" "$BUILD_DIR/icesprog" --exclude .git
+PREFIX_LIBHIDAPI="$BUILD_DIR/$LIBHIDAPI_FOLDER/release"
+PREFIX_LIBUSB="$BUILD_DIR/$LIBUSB"/release
 
-cd "$BUILD_DIR/icesprog"
+wget "$WINDOWSBINMODE_URL" -O binmode.c
 
-#-- Build icesprog statically linked
-test -f "hidtest$EXE" && rm "hidtest$EXE"
 if [ "$ARCH" == "darwin" ]; then
   # TODO
-  $CC -o icesprog icesprog.c -lusb-1.0
-elif [ "${ARCH:0:7}" == "windows" ]; then
-
-  # windows libc converts line ending by default. This is a workarround.
-  echo -e "#if (defined _WIN32 || defined WIN32) && ! defined CYGWIN
-  #include <fcntl.h>
-  int _fmode = _O_BINARY;
-  #endif" > binmode.c
-
-  $CC -o "icesprog$EXE" icesprog.c binmode.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread -lsetupapi
-
+  $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
 else
-  $CC -o "icesprog$EXE" icesprog.c -static -L"$BUILD_DIR/$LIBHIDAPI2"/release/lib -I"$BUILD_DIR/$LIBHIDAPI2"/release/include/hidapi -lhidapi-libusb -L"$BUILD_DIR/$LIBUSB"/release/lib -I"$BUILD_DIR/$LIBUSB"/release/include/libusb-1.0 -lusb-1.0 -lpthread
+  $CC -o "icesprog$EXE" icesprog.c binmode.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -l$LIBHIDAPI_NAME -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0 $EXTRA_LIB
+ 
 fi
+
 cd ..
 
 # # -- Test the generated executables
