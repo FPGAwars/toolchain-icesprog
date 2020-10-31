@@ -7,7 +7,7 @@
 export LC_ALL=C
 
 # Generate toolchain-icesprog-arch-ver.tar.gz from source code
-# sources: https://github.com/FPGAwars/toolchain-icesprog
+# sources: https://github.com/aalku/toolchain-icesprog
 
 export VERSION=1.0.0
 
