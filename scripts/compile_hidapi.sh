@@ -3,8 +3,10 @@
 # -- Compile hidapi script
 LIBHIDAPI_VER=0.9.0
 LIBHIDAPI="hidapi-$LIBHIDAPI_VER"
-LIBUSB_VER=1.0.22
-LIBUSB=libusb-$LIBUSB_VER
+
+# -- This vars are inherited from compile_lsusb.sh but you will need them here if you disable it's COMPILE_LSUSB flag
+# LIBUSB_VER=1.0.22
+# LIBUSB=libusb-$LIBUSB_VER
 
 LIBHIDAPI_FOLDER="hidapi-$LIBHIDAPI"
 TAR_LIBHIDAPI="$LIBHIDAPI.tar.gz"
@@ -41,10 +43,6 @@ fi
 echo ""
 echo "----------> COMPILAR EJEMPLO!!!!"
 
-
-if [ "$ARCH" == "windows_x86" ]; then
-  EXTRA_LIB=" -lhid -lsetupapi"
-fi
 
 #-- Build hidtest statically linked
 cd hidtest || exit
