@@ -41,10 +41,10 @@ else
 fi
 cd ..
 
-echo "-----> EXE: $EXE"
+# -- This part is no longer needed. It is here just for testing the libusb static library
 
 # -- Test the generated executables
-test_bin examples/lsusb$EXE
+# test_bin examples/lsusb$EXE
 
 # -- Copy the executable into the packages/bin dir
-cp examples/lsusb$EXE "$PACKAGE_DIR"/"$NAME"/bin/lsusb$EXE
+# cp examples/lsusb$EXE "$PACKAGE_DIR"/"$NAME"/bin/lsusb$EXE

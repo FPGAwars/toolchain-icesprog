@@ -40,11 +40,15 @@ PREFIX_LIBUSB="$BUILD_DIR/$LIBUSB"/release
 wget "$WINDOWSBINMODE_URL" -O binmode.c
 
 if [ "$ARCH" == "darwin" ]; then
-  # TODO
-  $CC -o hidtest hidtest.cpp -lusb-1.0 -I../hidtest
+  # Copy the files needed from libusb
+  cp "$BUILD_DIR/$LIBUSB/libusb/libusb.h" .
+
+  # Copy the files needed from hidapi
+  cp "$BUILD_DIR/$LIBHIDAPI_FOLDER/hidapi/hidapi.h" .
+  cp "$BUILD_DIR/$LIBHIDAPI_FOLDER/mac/hid.c" .
+  $CC icesprog.c hid.c -lusb-1.0 -I. -framework IOKit -framework CoreFoundation -o icesprog
 else
   $CC -o "icesprog$EXE" icesprog.c binmode.c -static -L"$PREFIX_LIBHIDAPI"/lib -I"$PREFIX_LIBHIDAPI"/include/hidapi -l$LIBHIDAPI_NAME -L"$PREFIX_LIBUSB"/lib -lusb-1.0 -lpthread -I"$PREFIX_LIBUSB"/include/libusb-1.0 $EXTRA_LIB
- 
 fi
 
 cd ..
