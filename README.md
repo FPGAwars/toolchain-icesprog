@@ -13,7 +13,7 @@ Apio package that contains the [icesprog programmer](https://github.com/wuxx/ice
 Tested on *Ubuntu 20.04 LTS*
 
 ```
-sudo apt install git && git clone https://github.com/aalku/toolchain-icesprog.git
+sudo apt install git && git clone https://github.com/FPGAwars/toolchain-icesprog.git
 cd toolchain-icesprog
 ./build.sh linux_i686
 ./build.sh linux_x86_64
