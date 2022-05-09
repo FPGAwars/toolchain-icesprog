@@ -1,3 +1,8 @@
+# Archived!
+* **2022-May-9**: This repo has been archived, since the icesprog is no longer used as an isolated Apio package. Use the [Tools-oss-cad-suite](https://github.com/FPGAwars/tools-oss-cad-suite) package instead
+
+---------
+
 # toolchain-icesprog
 Apio package that contains the [icesprog programmer](https://github.com/wuxx/icesugar) for the icesugar board
 
